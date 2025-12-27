@@ -1,0 +1,18 @@
+# Core Framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# GraphQL
+strawberry-graphql[fastapi]==0.250.2
+
+# Database
+aiosqlite==0.20.0
+
+# Configuration
+pydantic==2.10.5
+pydantic-settings==2.7.1
+python-dotenv==1.0.1
+
+# Data Processing
+pandas==2.3.3
+numpy==2.4.0

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Virtual Environment
+myenv/
+venv/
+.venv/
+
+# Environment Variables
+.env
+
+# Logs
+logs/
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+
+# Database files
+data/indian_banks.db
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
