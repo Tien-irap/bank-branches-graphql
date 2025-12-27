@@ -1,6 +1,3 @@
-"""
-Logging configuration for the application - The "Plumbing"
-"""
 import logging
 import sys
 from pathlib import Path
@@ -26,19 +23,15 @@ def setup_logger(
     Returns:
         Configured logger instance
     """
-    # Get log level and file from settings if not provided
     log_level = log_level or settings.LOG_LEVEL
     log_file = log_file or settings.LOG_FILE
     
-    # Create logger
     logger = logging.getLogger(name)
     logger.setLevel(getattr(logging, log_level.upper()))
     
-    # Avoid duplicate handlers
     if logger.handlers:
         return logger
     
-    # Create formatters
     detailed_formatter = logging.Formatter(
         settings.LOG_FORMAT,
         datefmt=settings.LOG_DATE_FORMAT
@@ -48,7 +41,6 @@ def setup_logger(
         "%(levelname)s - %(name)s - %(message)s"
     )
     
-    # Console Handler (stdout)
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(console_formatter)
@@ -57,14 +49,12 @@ def setup_logger(
     # File Handler (rotating)
     if log_file:
         try:
-            # Create logs directory if it doesn't exist
             log_path = Path(log_file)
             log_path.parent.mkdir(parents=True, exist_ok=True)
             
-            # Create rotating file handler (max 10MB, keep 5 backup files)
             file_handler = RotatingFileHandler(
                 log_file,
-                maxBytes=10 * 1024 * 1024,  # 10MB
+                maxBytes=10 * 1024 * 1024,  
                 backupCount=5,
                 encoding='utf-8'
             )
@@ -78,39 +68,25 @@ def setup_logger(
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """
-    Get a logger instance
-    
-    Args:
-        name: Logger name (optional)
-    
-    Returns:
-        Logger instance
-    """
     if name:
         return logging.getLogger(name)
     return logging.getLogger("bank_branches_api")
 
 
-# Initialize default logger
 logger = setup_logger()
 
 
 def log_request(method: str, path: str, status_code: int, duration: float):
-    """Log HTTP request"""
     logger.info(f"{method} {path} - {status_code} - {duration:.3f}s")
 
 
 def log_error(error: Exception, context: str = ""):
-    """Log error with context"""
     logger.error(f"{context}: {str(error)}", exc_info=True)
 
 
 def log_database_operation(operation: str, details: str = ""):
-    """Log database operation"""
     logger.debug(f"DB Operation: {operation} - {details}")
 
 
 def log_graphql_query(query_name: str, variables: dict = None):
-    """Log GraphQL query"""
     logger.info(f"GraphQL Query: {query_name} - Variables: {variables}")

@@ -1,6 +1,3 @@
-"""
-Core configuration for the Bank Branches API
-"""
 import os
 from pathlib import Path
 from typing import Optional
@@ -66,7 +63,6 @@ class Settings(BaseSettings):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Build DATABASE_URL from DATABASE_PATH if not explicitly set
         if not self.DATABASE_URL:
             self.DATABASE_URL = f"sqlite:///{self.DATABASE_PATH}"
     
@@ -80,7 +76,6 @@ class Settings(BaseSettings):
         return self.DATABASE_PATH.exists()
 
 
-# Global settings instance
 settings = Settings()
 
 

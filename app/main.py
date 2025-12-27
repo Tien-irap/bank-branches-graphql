@@ -1,6 +1,3 @@
-"""
-Bank Branches GraphQL API - Main Application Entry Point
-"""
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,10 +12,6 @@ from app.routes import schema
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Application lifespan manager
-    Handles startup and shutdown events
-    """
     # Startup
     logger.info("=" * 50)
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")

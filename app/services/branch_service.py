@@ -1,6 +1,3 @@
-"""
-Service layer - Business logic for Bank Branches API
-"""
 import base64
 from typing import Optional, List
 
@@ -20,7 +17,6 @@ from app.schemas import (
 
 
 class BankService:
-    """Service for bank-related business logic"""
     
     def __init__(self):
         self.repo = get_bank_repo()
@@ -31,20 +27,10 @@ class BankService:
         first: int = 20,
         after: Optional[str] = None
     ) -> BankConnection:
-        """
-        Get all banks with pagination
-        
-        Args:
-            first: Number of records to return
-            after: Cursor for pagination
-        
-        Returns:
-            BankConnection with edges and page info
-        """
+    
         logger.info(f"Getting banks - first: {first}, after: {after}")
         
         try:
-            # Decode cursor to get offset
             offset = 0
             if after:
                 try:
@@ -53,19 +39,15 @@ class BankService:
                     log_error(e, "Invalid cursor")
                     offset = 0
             
-            # Apply max page size limit
             limit = min(first, settings.MAX_PAGE_SIZE)
             
-            # Get data from repository
             bank_rows = self.repo.get_all_banks(limit=limit + 1, offset=offset)
             total_count = self.repo.count_banks()
             
-            # Check if there are more results
             has_next_page = len(bank_rows) > limit
             if has_next_page:
                 bank_rows = bank_rows[:limit]
             
-            # Convert to GraphQL types
             edges = []
             for idx, row in enumerate(bank_rows):
                 bank = BankType(
@@ -75,7 +57,6 @@ class BankService:
                 cursor = base64.b64encode(str(offset + idx).encode()).decode()
                 edges.append(BankEdge(node=bank, cursor=cursor))
             
-            # Page info
             page_info = PageInfo(
                 has_next_page=has_next_page,
                 has_previous_page=offset > 0,
@@ -95,15 +76,7 @@ class BankService:
             raise
     
     def get_bank_by_id(self, bank_id: int) -> Optional[BankType]:
-        """
-        Get bank by ID
-        
-        Args:
-            bank_id: Bank ID
-        
-        Returns:
-            Bank or None
-        """
+
         logger.info(f"Getting bank by ID: {bank_id}")
         try:
             row = self.repo.get_bank_by_id(bank_id)
@@ -116,7 +89,6 @@ class BankService:
 
 
 class BranchService:
-    """Service for branch-related business logic"""
     
     def __init__(self):
         self.branch_repo = get_branch_repo()
@@ -129,21 +101,10 @@ class BranchService:
         after: Optional[str] = None,
         filter_input: Optional[BranchFilterInput] = None
     ) -> BranchConnection:
-        """
-        Get all branches with pagination and filtering
-        
-        Args:
-            first: Number of records to return
-            after: Cursor for pagination
-            filter_input: Filters to apply
-        
-        Returns:
-            BranchConnection with edges and page info
-        """
+       
         logger.info(f"Getting branches - first: {first}, after: {after}, filters: {filter_input}")
         
         try:
-            # Decode cursor to get offset
             offset = 0
             if after:
                 try:
@@ -152,10 +113,8 @@ class BranchService:
                     log_error(e, "Invalid cursor")
                     offset = 0
             
-            # Apply max page size limit
             limit = min(first, settings.MAX_PAGE_SIZE)
             
-            # Get data from repository with filters
             if filter_input and any([
                 filter_input.ifsc,
                 filter_input.city,
@@ -178,12 +137,10 @@ class BranchService:
                 branch_rows = self.branch_repo.get_all_branches(limit=limit + 1, offset=offset)
                 total_count = self.branch_repo.count_branches()
             
-            # Check if there are more results
             has_next_page = len(branch_rows) > limit
             if has_next_page:
                 branch_rows = branch_rows[:limit]
             
-            # Convert to GraphQL types
             edges = []
             for idx, row in enumerate(branch_rows):
                 bank = BankType(
@@ -257,16 +214,13 @@ class BranchService:
             raise
 
 
-# Global service instances
 bank_service = BankService()
 branch_service = BranchService()
 
 
 def get_bank_service() -> BankService:
-    """Get bank service instance"""
     return bank_service
 
 
 def get_branch_service() -> BranchService:
-    """Get branch service instance"""
     return branch_service
